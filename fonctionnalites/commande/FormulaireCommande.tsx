@@ -48,32 +48,48 @@ export function FormulaireCommande() {
     const numDepot = donnees.moyenPaiement === "wave" ? contact.paiements.wave : contact.paiements.mtn;
     const nomMoyen = donnees.moyenPaiement === "wave" ? "Wave" : "MTN Money";
 
-    let message = `Nouvelle commande Nour_élégance :\n\n`;
-    message += `Nom : ${donnees.nomComplet}\n`;
-    message += `Téléphone : ${donnees.telephone}\n`;
-    if (donnees.email) message += `Email : ${donnees.email}\n`;
-    message += `Ville : ${donnees.ville}\n`;
-    message += `Adresse : ${donnees.adresseLivraison}\n`;
+    let message = `*NOUVELLE COMMANDE – NOUR_ÉLÉGANCE*\n\n`;
+    message += `Bonjour Nour_élégance,\n`;
+    message += `Je souhaite passer une commande. Voici les informations nécessaires à son traitement.\n\n`;
+
+    message += `*1. INFORMATIONS DU CLIENT*\n`;
+    message += `- Nom complet : ${donnees.nomComplet}\n`;
+    message += `- Téléphone : ${donnees.telephone}\n`;
+    if (donnees.email) message += `- E-mail : ${donnees.email}\n`;
+    message += `- Ville / Commune : ${donnees.ville}\n`;
+    message += `- Adresse de livraison : ${donnees.adresseLivraison}\n`;
     if (donnees.informationsComplementaires) {
-      message += `Infos : ${donnees.informationsComplementaires}\n`;
+      message += `- Infos complémentaires : ${donnees.informationsComplementaires}\n`;
     }
+    message += `\n`;
 
-    message += `\n--- Paiement ---\n`;
-    message += `Moyen de paiement : ${nomMoyen}\n`;
-    message += `Dépôt effectué au : ${numDepot}\n`;
-    message += `Mon numéro de paiement : ${donnees.numeroPaiement}\n`;
+    message += `*2. INFORMATIONS DE PAIEMENT*\n`;
+    message += `- Moyen de paiement : ${nomMoyen}\n`;
+    message += `- Numéro destinataire : ${numDepot}\n`;
+    message += `- Numéro utilisé : ${donnees.numeroPaiement}\n`;
+    message += `- Montant déclaré : ${formaterPrix(sousTotal)}\n\n`;
 
-    message += `\n--- Articles ---\n`;
+    message += `*3. DÉTAILS DE LA COMMANDE*\n`;
     lignes.forEach((ligne) => {
-      message += `- ${ligne.nom} (x${ligne.quantite}) : ${formaterPrix(ligne.prix * ligne.quantite)}\n`;
-      if (ligne.couleur) message += `  Couleur : ${ligne.couleur}\n`;
-      if (ligne.taille) message += `  Taille : ${ligne.taille}\n`;
+      let details = `${ligne.quantite} x ${ligne.nom}`;
+      const options = [];
+      if (ligne.couleur) options.push(ligne.couleur);
+      if (ligne.taille) options.push(ligne.taille);
+      if (options.length > 0) details += ` (${options.join(', ')})`;
+      details += ` : ${formaterPrix(ligne.prix)} / unité\n`;
+      message += `- ${details}`;
     });
+    message += `\n`;
 
-    message += `\nSous-total : ${formaterPrix(sousTotal)}\n`;
-    message += `Les frais de livraison seront confirmés.\n\n`;
-    message += `⚠️ IMPORTANT : Merci de joindre la capture d'écran de votre transaction en pièce jointe de ce message pour valider la commande.\n\n`;
-    message += `Merci de confirmer ma commande !`;
+    message += `*RÉCAPITULATIF*\n`;
+    message += `Sous-total : ${formaterPrix(sousTotal)}\n`;
+    message += `Total provisoire : ${formaterPrix(sousTotal)}\n\n`;
+
+    message += `*4. JUSTIFICATIF DE PAIEMENT*\n`;
+    message += `Je joins à ce message la capture d'écran de ma transaction comme preuve de paiement.\n\n`;
+
+    message += `Merci de bien vouloir vérifier le paiement, confirmer la réception de ma commande et m'informer des éventuels frais de livraison.\n\n`;
+    message += `Cordialement,\n${donnees.nomComplet}`;
 
     const lienWhatsApp = `https://wa.me/${contact.whatsapp.numeroInternational}?text=${encodeURIComponent(message)}`;
     
