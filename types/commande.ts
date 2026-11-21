@@ -4,5 +4,7 @@ export interface InformationsClient {
   email?: string;
   ville: string;
   adresseLivraison: string;
+  moyenPaiement: "wave" | "mtn";
+  numeroPaiement: string;
   informationsComplementaires?: string;
 }
