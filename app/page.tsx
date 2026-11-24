@@ -4,6 +4,7 @@ import { Hero } from "@/sections/Hero";
 import { Presentation } from "@/sections/Presentation";
 import { Categories } from "@/sections/Categories";
 import { ProduitsEnAvant } from "@/sections/ProduitsEnAvant";
+import { Temoignages } from "@/sections/Temoignages";
 
 export default function Accueil() {
   return (
@@ -14,6 +15,7 @@ export default function Accueil() {
         <Presentation />
         <Categories />
         <ProduitsEnAvant />
+        <Temoignages />
       </main>
       <Footer />
     </>

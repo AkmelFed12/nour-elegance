@@ -34,7 +34,6 @@ export function DetailsProduit({ produit, tousLesProduits }: { produit: Produit;
     <div className="space-y-16 md:space-y-24">
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
         
-        {/* Galerie d'images */}
         <div className="w-full lg:w-1/2 space-y-4">
           <div className="relative aspect-3/4 w-full rounded-sm overflow-hidden border border-beige/50">
             <Image src={imageActive} alt={produit.nom} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" priority />
@@ -57,14 +56,18 @@ export function DetailsProduit({ produit, tousLesProduits }: { produit: Produit;
           )}
         </div>
 
-        {/* Informations produit */}
         <div className="w-full lg:w-1/2 space-y-6 md:space-y-8">
           <div>
             <span className="text-xs uppercase tracking-widest text-dore mb-2 block font-medium">
               {produit.categorie}
             </span>
             <h1 className="font-serif text-3xl md:text-5xl text-brun mb-4">{produit.nom}</h1>
-            <p className="font-sans text-xl md:text-2xl text-brun/80 mb-6">{formaterPrix(produit.prix)}</p>
+            <p className="font-sans text-xl md:text-2xl text-brun/80 mb-4">{formaterPrix(produit.prix)}</p>
+            
+            {produit.matiere && (
+              <p className="text-sm text-brun/60 mb-6 font-medium italic">Matière : {produit.matiere}</p>
+            )}
+            
             <p className="text-sm md:text-base text-brun/70 leading-relaxed">{produit.description}</p>
           </div>
 

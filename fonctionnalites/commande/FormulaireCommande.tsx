@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,9 +8,11 @@ import * as z from "zod";
 import { usePanier } from "@/fonctionnalites/panier/ContextePanier";
 import { formaterPrix } from "@/utilitaires/formatage";
 import { contact } from "@/configuration/contact";
+import { livraison } from "@/configuration/livraison";
+import { produits } from "@/donnees/produits";
 import { IconeWhatsApp } from "@/composants/IconeWhatsApp";
 import { InformationsClient } from "@/types/commande";
-import { ShieldCheck, CreditCard } from "lucide-react";
+import { ShieldCheck, CreditCard, Truck } from "lucide-react";
 
 const schemaClient = z.object({
   nomComplet: z.string().min(2, "Le nom est requis"),
@@ -31,10 +33,37 @@ export function FormulaireCommande() {
     resolver: zodResolver(schemaClient),
     defaultValues: {
       moyenPaiement: "wave",
+      ville: "Abidjan - Treichville",
     }
   });
 
   const moyenPaiementSelectionne = watch("moyenPaiement");
+  const villeSelectionnee = watch("ville");
+
+  const optionsVilles = [
+    ...Object.keys(livraison.abidjan).map(v => ({ label: `Abidjan - ${v}`, value: `Abidjan - ${v}`, prix: livraison.abidjan[v] })),
+    { label: "Hors Abidjan (Expédition)", value: "Interieur", prix: livraison.expeditionMinimum }
+  ];
+
+  const infoVille = optionsVilles.find(v => v.value === villeSelectionnee) || optionsVilles[0];
+  const fraisLivraison = infoVille.prix;
+  const totalGeneral = sousTotal + fraisLivraison;
+
+  const calculerMontantAPayer = () => {
+    let montant = 0;
+    lignes.forEach(ligne => {
+      const produitRef = produits.find(p => p.identifiant === ligne.identifiantProduit);
+      const totalLigne = ligne.prix * ligne.quantite;
+      if (produitRef?.disponibilite === "sur-commande") {
+        montant += totalLigne;
+      } else {
+        montant += totalLigne / 2;
+      }
+    });
+    return montant;
+  };
+
+  const montantAPayerMaintenant = calculerMontantAPayer();
 
   if (lignes.length === 0 && !estEnvoye) {
     return (
@@ -67,7 +96,7 @@ export function FormulaireCommande() {
     message += `- Moyen de paiement : ${nomMoyen}\n`;
     message += `- Numéro destinataire : ${numDepot}\n`;
     message += `- Numéro utilisé : ${donnees.numeroPaiement}\n`;
-    message += `- Montant déclaré : ${formaterPrix(sousTotal)}\n\n`;
+    message += `- Montant payé (avance/totalité) : ${formaterPrix(montantAPayerMaintenant)}\n\n`;
 
     message += `*3. DÉTAILS DE LA COMMANDE*\n`;
     lignes.forEach((ligne) => {
@@ -83,7 +112,8 @@ export function FormulaireCommande() {
 
     message += `*RÉCAPITULATIF*\n`;
     message += `Sous-total : ${formaterPrix(sousTotal)}\n`;
-    message += `Total provisoire : ${formaterPrix(sousTotal)}\n\n`;
+    message += `Frais de livraison (${infoVille.label}) : ${formaterPrix(fraisLivraison)}\n`;
+    message += `Total général : ${formaterPrix(totalGeneral)}\n\n`;
 
     message += `*4. JUSTIFICATIF DE PAIEMENT*\n`;
     message += `Je joins à ce message la capture d'écran de ma transaction comme preuve de paiement.\n\n`;
@@ -136,12 +166,15 @@ export function FormulaireCommande() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Commune / Ville *</label>
-            <input {...register("ville")} className="w-full p-2.5 border border-beige rounded-sm focus:border-dore outline-none" />
-            {errors.ville && <span className="text-red-500 text-xs">{errors.ville.message}</span>}
+            <label className="block text-sm font-medium mb-1">Ville / Commune (Livraison) *</label>
+            <select {...register("ville")} className="w-full p-2.5 border border-beige rounded-sm focus:border-dore outline-none bg-white">
+              {optionsVilles.map(v => (
+                <option key={v.value} value={v.value}>{v.label} - {formaterPrix(v.prix)}</option>
+              ))}
+            </select>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Adresse de livraison *</label>
+            <label className="block text-sm font-medium mb-1">Adresse précise de livraison *</label>
             <input {...register("adresseLivraison")} className="w-full p-2.5 border border-beige rounded-sm focus:border-dore outline-none" />
             {errors.adresseLivraison && <span className="text-red-500 text-xs">{errors.adresseLivraison.message}</span>}
           </div>
@@ -162,21 +195,21 @@ export function FormulaireCommande() {
                   <div className="relative w-16 h-8">
                     <Image src="/images/marque/wave.jpg" alt="Wave" fill sizes="64px" className="object-contain" />
                   </div>
-                  <span className={`text-sm ${moyenPaiementSelectionne === "wave" ? "text-brun font-medium" : "text-brun/60"}`}>Wave</span>
                 </label>
                 <label className={`flex-1 flex flex-col items-center justify-center gap-2 p-3 border rounded-sm cursor-pointer transition-colors ${moyenPaiementSelectionne === "mtn" ? "border-dore bg-creme/50" : "border-beige hover:bg-creme/20"}`}>
                   <input type="radio" value="mtn" {...register("moyenPaiement")} className="hidden" />
                   <div className="relative w-16 h-8">
                     <Image src="/images/marque/mtn.png" alt="MTN Money" fill sizes="64px" className="object-contain" />
                   </div>
-                  <span className={`text-sm ${moyenPaiementSelectionne === "mtn" ? "text-brun font-medium" : "text-brun/60"}`}>MTN Money</span>
                 </label>
               </div>
             </div>
 
             <div className="p-4 bg-ivoire border border-beige rounded-sm text-sm text-brun/80 space-y-2">
-              <p>1. Ouvrez votre application {moyenPaiementSelectionne === "wave" ? "Wave" : "MTN Money"}.</p>
-              <p>2. Envoyez <strong>{formaterPrix(sousTotal)}</strong> au numéro :</p>
+              <p className="font-medium text-brun">Montant à verser maintenant : <span className="font-serif text-lg">{formaterPrix(montantAPayerMaintenant)}</span></p>
+              <p className="text-xs text-brun/60">(Totalité pour les articles sur commande, moitié pour ceux en stock)</p>
+              <p className="pt-2">1. Ouvrez votre application {moyenPaiementSelectionne === "wave" ? "Wave" : "MTN Money"}.</p>
+              <p>2. Envoyez ce montant au numéro :</p>
               <p className="font-bold text-lg text-brun tracking-wider">
                 {moyenPaiementSelectionne === "wave" ? contact.paiements.wave : contact.paiements.mtn}
               </p>
@@ -224,14 +257,24 @@ export function FormulaireCommande() {
             ))}
           </div>
 
-          <div className="pt-4 border-t border-ivoire/20 space-y-2">
-            <div className="flex justify-between text-lg">
-              <span>Total à payer</span>
-              <span className="font-serif text-xl">{formaterPrix(sousTotal)}</span>
+          <div className="pt-4 border-t border-ivoire/20 space-y-2 text-sm">
+            <div className="flex justify-between opacity-80">
+              <span>Sous-total</span>
+              <span>{formaterPrix(sousTotal)}</span>
             </div>
-            <p className="text-xs opacity-70">
-              Frais de livraison à confirmer sur WhatsApp.
-            </p>
+            <div className="flex justify-between items-center opacity-80">
+              <span className="flex items-center gap-1"><Truck size={14} /> Livraison ({infoVille.label})</span>
+              <span>{formaterPrix(fraisLivraison)}</span>
+            </div>
+            <div className="flex justify-between text-lg font-medium pt-2 border-t border-ivoire/20">
+              <span>Total général</span>
+              <span className="font-serif text-xl text-dore">{formaterPrix(totalGeneral)}</span>
+            </div>
+            
+            <div className="mt-4 p-3 bg-ivoire/10 rounded-sm">
+              <p className="text-xs text-dore uppercase tracking-widest font-semibold mb-1">À payer maintenant</p>
+              <p className="font-serif text-2xl">{formaterPrix(montantAPayerMaintenant)}</p>
+            </div>
           </div>
         </div>
       </div>

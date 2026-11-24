@@ -9,6 +9,7 @@ export interface Produit {
   images: string[];
   tailles?: string[];
   couleurs?: string[];
+  matiere?: string;
   disponibilite: Disponibilite;
   miseEnAvant: boolean;
 }

@@ -4,9 +4,10 @@ export const produits: Produit[] = [
   {
     identifiant: "ensemble-jeelbab-grand",
     nom: "Ensemble Jeelbab grand",
-    description: "Un ensemble conçu pour nos sœurs, tout en respectant nos valeurs religieuses.",
+    description: "Un ensemble conçu pour nos sœurs, tout en respectant nos valeurs religieuses. Confectionné avec soin, il offre une finition impeccable et une élégance intemporelle.",
     prix: 14000,
     categorie: "Khimar",
+    matiere: "Soie de Médine",
     images: [
       "/images/produits/Ensemble%20Jeelbab/Ensemble%20Jeelbab%20Grand/WhatsApp%20Image%202026-11-20%20at%2023.55.08.jpeg",
       "/images/produits/Ensemble%20Jeelbab/Ensemble%20Jeelbab%20Grand/WhatsApp%20Image%202026-11-20%20at%2023.55.09%20(1).jpeg",
@@ -20,9 +21,10 @@ export const produits: Produit[] = [
   {
     identifiant: "ensemble-khimar-petit",
     nom: "Ensemble khimar petit",
-    description: "Un ensemble confectionné avec amour, tout en restant pudique et élégante.",
+    description: "Un ensemble confectionné avec amour, tout en restant pudique et élégante. La douceur de la Soie de Médine vous garantit un confort absolu au quotidien.",
     prix: 12000,
     categorie: "Khimar",
+    matiere: "Soie de Médine",
     images: [
       "/images/produits/Ensemble%20Jeelbab/Ensemble%20Khimar%20petit/22749d58-d0b2-4d5c-8eda-ab6cb8500d46.JPG",
       "/images/produits/Ensemble%20Jeelbab/Ensemble%20Khimar%20petit/28ab191b-7058-4c7c-979a-953f5c346198.JPG",
@@ -37,9 +39,10 @@ export const produits: Produit[] = [
   {
     identifiant: "robe-makeba",
     nom: "Robe Makeba",
-    description: "Une robe simple, facile à porter, sans toutefois avoir chaud.",
+    description: "Une robe simple, facile à porter, sans toutefois avoir chaud. Un tombé parfait grâce à une sélection rigoureuse de la Soie de Médine.",
     prix: 9000,
     categorie: "Makeba",
+    matiere: "Soie de Médine",
     images: [
       "/images/produits/Ensemble%20Robe/Robe%20Makeba/26e6bd04-8cd8-47f0-9e42-25db58fff157.JPG",
       "/images/produits/Ensemble%20Robe/Robe%20Makeba/64f2b63b-1993-4458-9c11-c588df4b773a.JPG",
@@ -53,9 +56,10 @@ export const produits: Produit[] = [
   {
     identifiant: "robe-simple",
     nom: "Robe simple",
-    description: "Une robe simple pas moulante, qui respecte votre personnalité.",
+    description: "Une robe simple pas moulante, qui respecte votre personnalité. Conçue en Soie de Médine pour allier pudeur et confort.",
     prix: 8000,
     categorie: "Robe",
+    matiere: "Soie de Médine",
     images: [
       "/images/produits/Ensemble%20Robe/Robe%20simple/1dc8b459-f9ab-4cc9-8640-535f4a18f0b5.JPG",
       "/images/produits/Ensemble%20Robe/Robe%20simple/36d47e19-4391-479b-be87-5ca6ce1f13d1.JPG",
@@ -71,9 +75,10 @@ export const produits: Produit[] = [
   {
     identifiant: "ensemble-jupe",
     nom: "Ensemble jupe",
-    description: "Des ensembles jupes amples légiférés, confectionnés pour les femmes qui veulent concilier pudeur et élégance.",
+    description: "Des ensembles jupes amples légiférés, confectionnés pour les femmes qui veulent concilier pudeur et élégance. Tissu fluide et agréable à porter.",
     prix: 12000,
     categorie: "Deux pièces",
+    matiere: "Soie de Médine",
     images: [
       "/images/produits/Ensemble%20Jupe/Deux%20pi%C3%A8ces/03f8e829-c2a7-4421-b85f-df64f41dbae5.JPG",
       "/images/produits/Ensemble%20Jupe/Deux%20pi%C3%A8ces/07482664-4b42-49a6-b63b-f940f39892f7.JPG",
@@ -106,9 +111,10 @@ export const produits: Produit[] = [
   {
     identifiant: "ensemble-jupe-khimar",
     nom: "Ensemble jupe + khimar",
-    description: "Un trois pièces pour mes sœurs caviars, confectionnés pour vous.",
+    description: "Un trois pièces pour mes sœurs caviars, confectionnés pour vous. Un ensemble raffiné en Soie de Médine qui sublime la silhouette.",
     prix: 16000,
     categorie: "Trois pièces",
+    matiere: "Soie de Médine",
     images: [
       "/images/produits/Ensemble%20Jupe%20et%20Khimar/Trois%20pi%C3%A8ces/03a21c0b-e023-4ffc-bbba-445adcf83d86.JPG",
       "/images/produits/Ensemble%20Jupe%20et%20Khimar/Trois%20pi%C3%A8ces/28f22848-201c-4962-aa67-ec029aea8208.JPG",
@@ -127,9 +133,10 @@ export const produits: Produit[] = [
   {
     identifiant: "ensemble-kimono",
     nom: "Ensemble kimono",
-    description: "Ensemble kimono, idéal pour vos sorties entre copines, tout en restant pudique et élégante.",
+    description: "Ensemble kimono, idéal pour vos sorties entre copines, tout en restant pudique et élégante. Une pièce maîtresse en Soie de Médine.",
     prix: 12000,
     categorie: "Kimono",
+    matiere: "Soie de Médine",
     images: [
       "/images/produits/Ensemble%20Kimono/53d8b5c7-9012-45ec-8866-209a76f1b0eb.JPG",
       "/images/produits/Ensemble%20Kimono/81df470a-9d92-42d6-8a80-f5b7c6a70741.JPG",
@@ -145,9 +152,10 @@ export const produits: Produit[] = [
   {
     identifiant: "tenue-sport-mougouba",
     nom: "Tenue de sport Mougouba",
-    description: "Des tenues conçues pour des femmes qui veulent faire du sport sans toutefois se sentir mal à l'aise.",
+    description: "Des tenues conçues pour des femmes qui veulent faire du sport sans toutefois se sentir mal à l'aise. Confortables et adaptées.",
     prix: 12000,
     categorie: "Sport",
+    matiere: "Tissu spécifique sport",
     images: [
       "/images/produits/Ensemble%20Tenue%20de%20Sport/Tenue%20de%20sport%20mougouba/1501391d-4632-4c67-9094-be2d4722e7d1.JPG",
       "/images/produits/Ensemble%20Tenue%20de%20Sport/Tenue%20de%20sport%20mougouba/ee544e27-d650-4895-a6b6-34b822d93a1a.JPG"
@@ -159,9 +167,10 @@ export const produits: Produit[] = [
   {
     identifiant: "robe-chemise-asma",
     nom: "Robe chemise Asma",
-    description: "Des robes chemises longues pour des femmes de valeur, qui ne veulent pas en faire trop.",
+    description: "Des robes chemises longues pour des femmes de valeur, qui ne veulent pas en faire trop. Élégance et discrétion assurées.",
     prix: 11000,
     categorie: "Robe",
+    matiere: "Soie de Médine",
     images: [
       "/images/produits/Ensemble%20Robe/Robe%20chemise%20Asma/5164d852-d8bf-4264-ba58-4b00d59e9de6.JPG",
       "/images/produits/Ensemble%20Robe/Robe%20chemise%20Asma/6c795a24-8a21-4c55-9eb5-77e34059e372.JPG",
