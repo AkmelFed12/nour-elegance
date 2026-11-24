@@ -15,7 +15,8 @@ export function Header() {
     { nom: "Accueil", href: "/" },
     { nom: "Boutique", href: "/boutique" },
     { nom: "Catégories", href: "/categories" },
-    { nom: "À propos", href: "/a-propos" },
+    { nom: "Livraison", href: "/livraison" },
+    { nom: "Avis", href: "/#temoignages" },
     { nom: "Contact", href: "/contact" },
   ];
 
@@ -23,7 +24,9 @@ export function Header() {
     <header className="bg-ivoire sticky top-0 z-50 border-b border-beige/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <Link href="/" className="flex items-center gap-3">
+          
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3 shrink-0">
             <div className="relative w-12 h-12 rounded-full overflow-hidden border border-dore shrink-0">
               <Image
                 src="/images/marque/logo.jpeg"
@@ -39,7 +42,8 @@ export function Header() {
             </span>
           </Link>
 
-          <nav className="hidden md:flex gap-8">
+          {/* Navigation Desktop */}
+          <nav className="hidden lg:flex gap-6 xl:gap-8">
             {liens.map((lien) => (
               <Link
                 key={lien.nom}
@@ -51,7 +55,8 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-4">
+          {/* Actions (Panier & Menu Mobile) */}
+          <div className="flex items-center gap-4 sm:gap-6">
             <Link href="/panier" className="relative hover:text-dore transition-colors">
               <ShoppingBag size={24} strokeWidth={1.5} />
               {totalArticles > 0 && (
@@ -60,25 +65,28 @@ export function Header() {
                 </span>
               )}
             </Link>
+            
             <button
-              className="md:hidden hover:text-dore transition-colors"
+              className="lg:hidden hover:text-dore transition-colors p-1"
               onClick={() => setEstOuvert(!estOuvert)}
+              aria-label="Menu"
             >
-              {estOuvert ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
+              {estOuvert ? <X size={26} strokeWidth={1.5} /> : <Menu size={26} strokeWidth={1.5} />}
             </button>
           </div>
         </div>
       </div>
 
+      {/* Navigation Mobile (Menu Burger) */}
       {estOuvert && (
-        <div className="md:hidden bg-ivoire border-b border-beige/50">
+        <div className="lg:hidden bg-ivoire border-b border-beige/50 absolute w-full shadow-lg">
           <div className="px-4 pt-2 pb-6 space-y-1">
             {liens.map((lien) => (
               <Link
                 key={lien.nom}
                 href={lien.href}
                 onClick={() => setEstOuvert(false)}
-                className="block px-3 py-3 text-base uppercase tracking-widest hover:text-dore transition-colors"
+                className="block px-4 py-4 text-sm uppercase tracking-widest border-b border-beige/20 last:border-0 hover:text-dore hover:bg-creme/30 transition-colors"
               >
                 {lien.nom}
               </Link>

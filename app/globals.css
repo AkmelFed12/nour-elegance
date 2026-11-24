@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+}
+
+/* ... garde tout le reste de ton code CSS en dessous ... */
+@import "tailwindcss";
+
 @theme {
   --color-ivoire: #FDFBF7;
   --color-creme: #F5EBE1;
