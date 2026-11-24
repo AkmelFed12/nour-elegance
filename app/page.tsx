@@ -4,6 +4,7 @@ import { Hero } from "@/sections/Hero";
 import { Presentation } from "@/sections/Presentation";
 import { Categories } from "@/sections/Categories";
 import { ProduitsEnAvant } from "@/sections/ProduitsEnAvant";
+import { InfosPratiques } from "@/sections/InfosPratiques";
 import { Temoignages } from "@/sections/Temoignages";
 
 export default function Accueil() {
@@ -15,7 +16,10 @@ export default function Accueil() {
         <Presentation />
         <Categories />
         <ProduitsEnAvant />
-        <Temoignages />
+        <InfosPratiques />
+        <div id="temoignages">
+          <Temoignages />
+        </div>
       </main>
       <Footer />
     </>

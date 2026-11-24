@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,7 +18,8 @@ const schemaClient = z.object({
   nomComplet: z.string().min(2, "Le nom est requis"),
   telephone: z.string().min(8, "Le numéro de téléphone est requis"),
   email: z.string().email("Email invalide").optional().or(z.literal("")),
-  ville: z.string().min(2, "La ville/commune est requise"),
+  ville: z.string().min(1, "La ville/commune est requise"),
+  autreVille: z.string().optional(),
   adresseLivraison: z.string().min(5, "L'adresse est requise"),
   moyenPaiement: z.enum(["wave", "mtn"]),
   numeroPaiement: z.string().min(8, "Le numéro utilisé pour le paiement est requis"),
@@ -33,21 +34,31 @@ export function FormulaireCommande() {
     resolver: zodResolver(schemaClient),
     defaultValues: {
       moyenPaiement: "wave",
-      ville: "Abidjan - Treichville",
+      ville: "Treichville",
     }
   });
 
   const moyenPaiementSelectionne = watch("moyenPaiement");
   const villeSelectionnee = watch("ville");
+  const autreVilleSaisie = watch("autreVille");
 
-  const optionsVilles = [
-    ...Object.keys(livraison.abidjan).map(v => ({ label: `Abidjan - ${v}`, value: `Abidjan - ${v}`, prix: livraison.abidjan[v] })),
-    { label: "Hors Abidjan (Expédition)", value: "Interieur", prix: livraison.expeditionMinimum }
-  ];
+  const estAutreVille = villeSelectionnee === "Autre";
 
-  const infoVille = optionsVilles.find(v => v.value === villeSelectionnee) || optionsVilles[0];
-  const fraisLivraison = infoVille.prix;
-  const totalGeneral = sousTotal + fraisLivraison;
+  let fraisLivraisonNombre = 0;
+  let labelFraisLivraison = "";
+  let labelVille = villeSelectionnee;
+
+  if (estAutreVille) {
+    fraisLivraisonNombre = livraison.expeditionMinimum;
+    labelFraisLivraison = `À partir de ${formaterPrix(fraisLivraisonNombre)}`;
+    labelVille = autreVilleSaisie || "Hors Abidjan (À préciser)";
+  } else {
+    fraisLivraisonNombre = livraison.abidjan[villeSelectionnee] || 0;
+    labelFraisLivraison = formaterPrix(fraisLivraisonNombre);
+    labelVille = `Abidjan - ${villeSelectionnee}`;
+  }
+
+  const totalGeneral = sousTotal + fraisLivraisonNombre;
 
   const calculerMontantAPayer = () => {
     let montant = 0;
@@ -76,6 +87,7 @@ export function FormulaireCommande() {
   const onSubmit = (donnees: InformationsClient) => {
     const numDepot = donnees.moyenPaiement === "wave" ? contact.paiements.wave : contact.paiements.mtn;
     const nomMoyen = donnees.moyenPaiement === "wave" ? "Wave" : "MTN Money";
+    const villeComplete = estAutreVille ? `${donnees.autreVille} (Hors Abidjan)` : `Abidjan - ${donnees.ville}`;
 
     let message = `*NOUVELLE COMMANDE – NOUR_ÉLÉGANCE*\n\n`;
     message += `Bonjour Nour_élégance,\n`;
@@ -85,7 +97,7 @@ export function FormulaireCommande() {
     message += `- Nom complet : ${donnees.nomComplet}\n`;
     message += `- Téléphone : ${donnees.telephone}\n`;
     if (donnees.email) message += `- E-mail : ${donnees.email}\n`;
-    message += `- Ville / Commune : ${donnees.ville}\n`;
+    message += `- Ville / Commune : ${villeComplete}\n`;
     message += `- Adresse de livraison : ${donnees.adresseLivraison}\n`;
     if (donnees.informationsComplementaires) {
       message += `- Infos complémentaires : ${donnees.informationsComplementaires}\n`;
@@ -112,8 +124,14 @@ export function FormulaireCommande() {
 
     message += `*RÉCAPITULATIF*\n`;
     message += `Sous-total : ${formaterPrix(sousTotal)}\n`;
-    message += `Frais de livraison (${infoVille.label}) : ${formaterPrix(fraisLivraison)}\n`;
-    message += `Total général : ${formaterPrix(totalGeneral)}\n\n`;
+    
+    if (estAutreVille) {
+      message += `Frais de livraison (${villeComplete}) : À partir de 2 500 FCFA (Le tarif exact sera confirmé selon votre localisation)\n`;
+      message += `Total provisoire : ${formaterPrix(totalGeneral)}\n\n`;
+    } else {
+      message += `Frais de livraison (${villeComplete}) : ${formaterPrix(fraisLivraisonNombre)}\n`;
+      message += `Total général : ${formaterPrix(totalGeneral)}\n\n`;
+    }
 
     message += `*4. JUSTIFICATIF DE PAIEMENT*\n`;
     message += `Je joins à ce message la capture d'écran de ma transaction comme preuve de paiement.\n\n`;
@@ -168,17 +186,36 @@ export function FormulaireCommande() {
           <div>
             <label className="block text-sm font-medium mb-1">Ville / Commune (Livraison) *</label>
             <select {...register("ville")} className="w-full p-2.5 border border-beige rounded-sm focus:border-dore outline-none bg-white">
-              {optionsVilles.map(v => (
-                <option key={v.value} value={v.value}>{v.label} - {formaterPrix(v.prix)}</option>
-              ))}
+              <optgroup label="Abidjan">
+                {Object.keys(livraison.abidjan).map(v => (
+                  <option key={v} value={v}>{v} ({formaterPrix(livraison.abidjan[v])})</option>
+                ))}
+              </optgroup>
+              <optgroup label="Hors Abidjan">
+                <option value="Autre">Autre ville (Expédition à partir de 2500 F)</option>
+              </optgroup>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Adresse précise de livraison *</label>
+            <label className="block text-sm font-medium mb-1">
+              {estAutreVille ? "Précisez votre ville *" : "Adresse précise *"}
+            </label>
+            {estAutreVille ? (
+              <input {...register("autreVille")} placeholder="Ex: Bouaké, Yamoussoukro..." className="w-full p-2.5 border border-beige rounded-sm focus:border-dore outline-none" />
+            ) : (
+              <input {...register("adresseLivraison")} className="w-full p-2.5 border border-beige rounded-sm focus:border-dore outline-none" />
+            )}
+            {errors.adresseLivraison && !estAutreVille && <span className="text-red-500 text-xs">{errors.adresseLivraison.message}</span>}
+          </div>
+        </div>
+        
+        {estAutreVille && (
+          <div>
+            <label className="block text-sm font-medium mb-1">Quartier / Adresse précise *</label>
             <input {...register("adresseLivraison")} className="w-full p-2.5 border border-beige rounded-sm focus:border-dore outline-none" />
             {errors.adresseLivraison && <span className="text-red-500 text-xs">{errors.adresseLivraison.message}</span>}
           </div>
-        </div>
+        )}
 
         <div className="pt-4 border-t border-beige/50">
           <h2 className="font-serif text-2xl text-brun mb-4 flex items-center gap-2">
@@ -263,13 +300,18 @@ export function FormulaireCommande() {
               <span>{formaterPrix(sousTotal)}</span>
             </div>
             <div className="flex justify-between items-center opacity-80">
-              <span className="flex items-center gap-1"><Truck size={14} /> Livraison ({infoVille.label})</span>
-              <span>{formaterPrix(fraisLivraison)}</span>
+              <span className="flex items-center gap-1"><Truck size={14} /> Livraison ({labelVille})</span>
+              <span>{estAutreVille ? labelFraisLivraison : formaterPrix(fraisLivraisonNombre)}</span>
             </div>
             <div className="flex justify-between text-lg font-medium pt-2 border-t border-ivoire/20">
-              <span>Total général</span>
+              <span>{estAutreVille ? "Total provisoire" : "Total général"}</span>
               <span className="font-serif text-xl text-dore">{formaterPrix(totalGeneral)}</span>
             </div>
+            {estAutreVille && (
+              <p className="text-xs text-dore/80 italic mt-1">
+                * Le tarif exact de l'expédition vous sera confirmé sur WhatsApp.
+              </p>
+            )}
             
             <div className="mt-4 p-3 bg-ivoire/10 rounded-sm">
               <p className="text-xs text-dore uppercase tracking-widest font-semibold mb-1">À payer maintenant</p>
